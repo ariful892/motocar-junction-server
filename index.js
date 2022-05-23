@@ -16,10 +16,16 @@ async function run() {
     try {
         await client.connect();
         const partCollection = client.db('motocar_junction').collection('parts');
+        const reviewCollection = client.db('motocar_junction').collection('reviews');
 
         app.get('/part', async (req, res) => {
             const parts = await partCollection.find().toArray();
             res.send(parts);
+        })
+
+        app.get('/review', async (req, res) => {
+            const reviews = await reviewCollection.find().toArray();
+            res.send(reviews);
         })
     }
     finally {
