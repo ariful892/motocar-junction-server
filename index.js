@@ -36,6 +36,12 @@ async function run() {
             res.send(reviews);
         });
 
+        app.post('/review', async (req, res) => {
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
+            res.send(result);
+        })
+
         app.get('/booking', async (req, res) => {
             const email = req.query.email;
             console.log(email);
