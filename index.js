@@ -18,6 +18,7 @@ async function run() {
         const partCollection = client.db('motocar_junction').collection('parts');
         const reviewCollection = client.db('motocar_junction').collection('reviews');
         const bookingCollection = client.db('motocar_junction').collection('bookings');
+        const profileCollection = client.db('motocar_junction').collection('profile');
 
         app.get('/part', async (req, res) => {
             const parts = await partCollection.find().toArray();
@@ -44,11 +45,17 @@ async function run() {
 
         app.get('/booking', async (req, res) => {
             const email = req.query.email;
-            console.log(email);
             const query = { email: email };
             const bookings = await bookingCollection.find(query).toArray();
             res.send(bookings);
 
+        })
+
+        app.get('/booking/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await bookingCollection.findOne(query);
+            res.send(result);
         })
 
         app.post('/booking', async (req, res) => {
@@ -64,6 +71,11 @@ async function run() {
             res.send(result);
         })
 
+        app.post('/profile', async (req, res) => {
+            const profile = req.body;
+            const result = await profileCollection.insertOne(profile);
+            res.send(result);
+        })
 
     }
     finally {
@@ -78,5 +90,5 @@ app.get('/', (req, res) => {
 })
 
 app.listen(port, () => {
-    console.log(`Doctors app listening on port ${port}`)
+    console.log(`Motocar app listening on port ${port}`)
 })
