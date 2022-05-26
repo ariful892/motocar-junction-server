@@ -50,10 +50,10 @@ async function run() {
             }
         }
 
-        // app.get('/part/slice', verifyJWT, async (req, res) => {
-        //     const parts = await partCollection.find().toArray();
-        //     res.send(parts.reverse().slice(0, 6));
-        // });
+        app.get('/part/slice', verifyJWT, async (req, res) => {
+            const parts = await partCollection.find().toArray();
+            res.send(parts.reverse().slice(0, 6));
+        });
 
         app.get('/part', verifyJWT, async (req, res) => {
             const parts = await partCollection.find().toArray();
@@ -134,15 +134,6 @@ async function run() {
             const profile = req.body;
             const result = await profileCollection.insertOne(profile);
             res.send(result);
-            // const email = req.params.email;
-            // const profile = req.body;
-            // const filter = { email: email, name: profile.name, address: profile.address, education: profile.education, phone: profile.phone, img: profile.img, socialId: profile.socialId };
-            // const options = { upsert: true };
-            // const updateDoc = {
-            //     $set: profile,
-            // };
-            // const result = await userCollection.updateOne(filter, updateDoc, options);
-            // res.send(result);
         })
 
         app.get('/user', verifyJWT, async (req, res) => {
