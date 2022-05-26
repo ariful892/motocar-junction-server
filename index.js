@@ -50,6 +50,11 @@ async function run() {
             }
         }
 
+        app.get('/part/slice', verifyJWT, async (req, res) => {
+            const parts = await partCollection.find().toArray();
+            res.send(parts.reverse().slice(0, 6));
+        });
+
         app.get('/part', verifyJWT, async (req, res) => {
             const parts = await partCollection.find().toArray();
             res.send(parts);
