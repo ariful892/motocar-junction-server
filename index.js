@@ -50,12 +50,12 @@ async function run() {
             }
         }
 
-        app.get('/part/slice', verifyJWT, async (req, res) => {
+        app.get('/part/slice', async (req, res) => {
             const parts = await partCollection.find().toArray();
             res.send(parts.reverse().slice(0, 6));
         });
 
-        app.get('/part', verifyJWT, async (req, res) => {
+        app.get('/part', async (req, res) => {
             const parts = await partCollection.find().toArray();
             res.send(parts);
         });
@@ -67,7 +67,7 @@ async function run() {
             res.send(part);
         });
 
-        app.post('/part', verifyJWT, async (req, res) => {
+        app.post('/part', async (req, res) => {
             const part = req.body;
             const result = await partCollection.insertOne(part);
             res.send(result);
