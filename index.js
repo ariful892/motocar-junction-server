@@ -38,7 +38,19 @@ async function run() {
         const profileCollection = client.db('motocar_junction').collection('profile');
         const userCollection = client.db('motocar_junction').collection('users');
 
-        app.get('/part', async (req, res) => {
+
+        const verifyAdmin = async (req, res, next) => {
+            const requester = req.decoded.email;
+            const requesterAccount = await userCollection.findOne({ email: requester });
+            if (requesterAccount.role === 'admin') {
+                next();
+            }
+            else {
+                return res.status(403).send({ message: 'forbidden' });
+            }
+        }
+
+        app.get('/part', verifyJWT, async (req, res) => {
             const parts = await partCollection.find().toArray();
             res.send(parts);
         });
@@ -49,6 +61,19 @@ async function run() {
             const part = await partCollection.findOne(query);
             res.send(part);
         });
+
+        app.post('/part', verifyJWT, async (req, res) => {
+            const part = req.body;
+            const result = await partCollection.insertOne(part);
+            res.send(result);
+        })
+
+        app.delete('/part/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await partCollection.deleteOne(query);
+            res.send(result);
+        })
 
         app.get('/review', async (req, res) => {
             const reviews = await reviewCollection.find().toArray();
@@ -62,7 +87,12 @@ async function run() {
         })
 
         app.get('/booking', verifyJWT, async (req, res) => {
-            const email = req.query.email;
+            const bookings = await bookingCollection.find().toArray();
+            res.send(bookings);
+        })
+
+        app.get('/booking/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
             const decodedEmail = req.decoded.email;
             if (email === decodedEmail) {
                 const query = { email: email };
@@ -115,7 +145,14 @@ async function run() {
             res.send(users);
         })
 
-        app.put('/user/admin/:email', verifyJWT, async (req, res) => {
+        app.get('/admin/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            const user = await userCollection.findOne({ email: email });
+            const isAdmin = user.role === 'admin';
+            res.send({ admin: isAdmin })
+        })
+
+        app.put('/user/admin/:email', verifyJWT, verifyAdmin, async (req, res) => {
             const email = req.params.email;
 
             const filter = { email: email };
