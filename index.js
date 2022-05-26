@@ -50,10 +50,10 @@ async function run() {
             }
         }
 
-        app.get('/part/slice', verifyJWT, async (req, res) => {
-            const parts = await partCollection.find().toArray();
-            res.send(parts.reverse().slice(0, 6));
-        });
+        // app.get('/part/slice', verifyJWT, async (req, res) => {
+        //     const parts = await partCollection.find().toArray();
+        //     res.send(parts.reverse().slice(0, 6));
+        // });
 
         app.get('/part', verifyJWT, async (req, res) => {
             const parts = await partCollection.find().toArray();
@@ -96,8 +96,8 @@ async function run() {
             res.send(bookings);
         })
 
-        app.get('/booking/:email', verifyJWT, async (req, res) => {
-            const email = req.params.email;
+        app.get('/booking', verifyJWT, async (req, res) => {
+            const email = req.query.email;
             const decodedEmail = req.decoded.email;
             if (email === decodedEmail) {
                 const query = { email: email };
@@ -110,7 +110,7 @@ async function run() {
 
         })
 
-        app.get('/booking/:id', async (req, res) => {
+        app.get('/booking/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await bookingCollection.findOne(query);
@@ -179,7 +179,7 @@ async function run() {
             };
             const result = await userCollection.updateOne(filter, updateDoc, options);
             const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN, { expiresIn: '30d' });
-            console.log(token);
+
             res.send({ result, token });
         })
 
