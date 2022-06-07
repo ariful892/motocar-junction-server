@@ -96,8 +96,8 @@ async function run() {
             res.send(bookings);
         })
 
-        app.get('/booking', verifyJWT, async (req, res) => {
-            const email = req.query.email;
+        app.get('/booking/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
             const decodedEmail = req.decoded.email;
             if (email === decodedEmail) {
                 const query = { email: email };
